@@ -177,3 +177,13 @@ Why This Is Important
 Without credentials: true, cookies won’t work
 
 Required for JWT-based auth using cookies
+
+Media Upload (Cloudinary)
+
+Cloudinary configuration using environment variables
+
+Utility function to upload:
+
+Images
+
+Videos
