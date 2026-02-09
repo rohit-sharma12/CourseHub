@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import CourseCard from "./CourseCard";
+import Course from "./Course";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import CourseCard from "./CourseCard";
 
 const HeroSection = () => {
     const [search, setSearch] = useState("");
@@ -28,7 +29,7 @@ const HeroSection = () => {
 
                     <form action="" className="mt-10 w-full max-w-xl">
                         <div className="flex items-center gap-2 p-2 rounded-2xl border bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 focus-within:ring-2 focus-within:ring-indigo-500 transition">
-                           
+
                             <Search className="text-gray-400 ml-2" size={20} />
 
                             <input
@@ -36,7 +37,7 @@ const HeroSection = () => {
                                 placeholder="Search courses (React, Node, MERN...)"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="flex-1 h-12 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400"/>
+                                className="flex-1 h-12 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400" />
 
                             <Button
                                 type="submit"
@@ -54,19 +55,16 @@ const HeroSection = () => {
                 </div>
             </section>
 
-            <section className="bg-gray-50 dark:bg-slate-900">
+            <div className="bg-gray-50 dark:bg-slate-900">
                 <div className="max-w-7xl mx-auto px-6 py-20">
+
                     <div className="flex justify-between items-center mb-8">
                         <h2 className="text-2xl font-bold">Popular Courses</h2>
-                        <Button variant="ghost">View All</Button>
                     </div>
-
-                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-                        <CourseCard />
-                        
-                    </div>
+                    <CourseCard />
                 </div>
-            </section>
+            </div>
+
 
             <section className="max-w-7xl mx-auto px-6 py-20 text-center">
                 <h2 className="text-3xl md:text-4xl font-bold">

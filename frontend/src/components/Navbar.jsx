@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SidebarItem from "../SidebarItem";
-
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
     const user = true;
@@ -29,13 +29,11 @@ const Navbar = () => {
             <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
-                    {/* Logo */}
                     <div className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
                         <School size={28} />
                         CourseHub
                     </div>
 
-                    {/* Desktop Menu */}
                     <div className="hidden md:flex items-center gap-6">
                         <button
                             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -59,12 +57,17 @@ const Navbar = () => {
 
                                     <DropdownMenuItem>
                                         <BookOpen size={16} className="mr-2" />
-                                        My Learning
+                                        <Link to="my-learning">
+                                            My learning
+                                        </Link>
+
                                     </DropdownMenuItem>
 
                                     <DropdownMenuItem>
                                         <User size={16} className="mr-2" />
-                                        Edit Profile
+                                        <Link to="profile">
+                                            Edit Profile
+                                        </Link>
                                     </DropdownMenuItem>
 
                                     {role === "instructor" && (
@@ -110,7 +113,7 @@ const Navbar = () => {
                 className={`fixed top-0 right-0 h-full w-72 bg-white dark:bg-slate-900 z-50
                 transform transition-transform duration-300
                 ${open ? "translate-x-0" : "translate-x-full"}`}>
-                
+
                 <div className="flex items-center justify-between px-5 h-16 border-b dark:border-slate-800">
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                         Menu
