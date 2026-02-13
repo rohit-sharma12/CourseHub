@@ -11,11 +11,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SidebarItem from "../SidebarItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLogoutUserMutation } from "../api/authApi";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-    const user = true;
-    const role = "instructor";
+    const { user } = useSelector(store => store.auth);
+    const navigate = useNavigate();
+
+    const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
+
+    const logoutHandler = async () => {
+        await logoutUser();
+    }
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success(data.message || "User logout");
+            navigate("/login")
+        }
+    }, [isSuccess])
 
     const [theme, setTheme] = useState("light");
     const [open, setOpen] = useState(false);
@@ -46,7 +62,7 @@ const Navbar = () => {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Avatar className="cursor-pointer">
-                                        <AvatarImage src="https://github.com/shadcn.png" />
+                                        <AvatarImage src={user?.photoUrl || "https://github.com/shadcn.png"} />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                 </DropdownMenuTrigger>
@@ -69,17 +85,20 @@ const Navbar = () => {
                                             Edit Profile
                                         </Link>
                                     </DropdownMenuItem>
-
-                                    {role === "instructor" && (
-                                        <DropdownMenuItem>
-                                            <LayoutDashboard size={16} className="mr-2" />
-                                            Dashboard
-                                        </DropdownMenuItem>
-                                    )}
+                                    {
+                                        user.role === "instructor" && (
+                                            <>
+                                                <DropdownMenuItem>
+                                                    <LayoutDashboard size={16} className="mr-2" />
+                                                    Dashboard
+                                                </DropdownMenuItem>
+                                            </>
+                                        )
+                                    }
 
                                     <DropdownMenuSeparator />
 
-                                    <DropdownMenuItem className="text-red-500">
+                                    <DropdownMenuItem onClick={logoutHandler} className="text-red-500">
                                         <LogOut size={16} className="mr-2" />
                                         Logout
                                     </DropdownMenuItem>
@@ -87,8 +106,8 @@ const Navbar = () => {
                             </DropdownMenu>
                         ) : (
                             <div className="flex gap-3">
-                                <Button variant="outline">Login</Button>
-                                <Button>Signup</Button>
+                                <Button variant="outline" onClick={() => navigate("/login")}>Login</Button>
+                                <Button onClick={() => navigate("/signup")}>Signup</Button>
                             </div>
                         )}
                     </div>
@@ -127,12 +146,12 @@ const Navbar = () => {
                     <SidebarItem icon={<BookOpen size={18} />} text="My Learning" />
                     <SidebarItem icon={<User size={18} />} text="Edit Profile" />
 
-                    {role === "instructor" && (
-                        <SidebarItem
-                            icon={<LayoutDashboard size={18} />}
-                            text="Dashboard"
-                        />
-                    )}
+
+                    <SidebarItem
+                        icon={<LayoutDashboard size={18} />}
+                        text="Dashboard"
+                    />
+
 
                     <hr className="dark:border-slate-700 my-4" />
 

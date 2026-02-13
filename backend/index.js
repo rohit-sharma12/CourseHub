@@ -4,6 +4,7 @@ import connectDB from "./db.js";
 import userRoute from "./routes/user.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import courseRoute from "./routes/course.js";
 
 dotenv.config();
 connectDB();
@@ -21,6 +22,7 @@ app.use(cors({
 //apis
 app.use("/api/v1/user", userRoute)
 
+app.use("/api/v1/course", courseRoute)
 
 
 app.listen(PORT, () => {

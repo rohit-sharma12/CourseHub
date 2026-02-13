@@ -26,20 +26,49 @@ export const authApi = createApi({
             async onQueryStarted(arg, { queryFulfilled, dispatch }) {
                 try {
                     const result = await queryFulfilled;
-                    dispatch(userLoggedIn({user: result.data.user}))
+                    dispatch(userLoggedIn({ user: result.data.user }))
                 } catch (error) {
                     console.error(error);
-                    
+
                 }
             }
+        }),
+        logoutUser: builder.mutation({
+            query: () => ({
+                url: "logout",
+                method: "GET"
+            }),
+            async onQueryStarted(arg, {dispatch }) {
+                try {
+                    dispatch(userLoggedIn())
+                } catch (error) {
+                    console.error(error);
+                }
+            } 
         }),
         loadUser: builder.query({
             query: () => ({
                 url: "profile",
-                method:"GET"
+                method: "GET"
+            }),
+            async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+                try {
+                    const result = await queryFulfilled;
+                    dispatch(userLoggedIn({ user: result.data.user }))
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        }),
+        updateUser: builder.mutation({
+            query: (formData) => ({
+                url: "/profile/update",
+                method: "PUT",
+                body: formData,
+                credentials: "include",
             })
         })
     })
 })
 
-export const {useRegisterUserMutation, useLoginUserMutation, useLoadUserQuery} = authApi
+export const { useRegisterUserMutation, useLoginUserMutation,useLogoutUserMutation, useLoadUserQuery, useUpdateUserMutation } = authApi
