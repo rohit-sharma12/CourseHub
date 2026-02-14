@@ -1,25 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useNavigate } from "react-router-dom";
-//import { toast } from "sonner";
+import { useCreateCourseMutation } from "../../../api/courseApi";
+import { toast } from "sonner";
 
 const CreateCourse = () => {
     const navigate = useNavigate();
-    const [title, setTitle] = useState("");
+    const [courseTitle, setCourseTitle] = useState("");
     const [category, setCategory] = useState("");
 
-    const isLoading = false;
+    const [createCourse, { data, isLoading, error, isSuccess }] = useCreateCourseMutation();
 
     const getSelectedCategory = (value) => {
         setCategory(value)
     };
     const createCourseHandler = async () => {
-
+        await createCourse({ courseTitle, category })
     };
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success(data.message || "Course created.");
+            navigate("/admin/course")
+        }
+        if (error) {
+            toast.error(error?.data?.message || "Something went wrong");
+        }
+    }, [isSuccess, error]);
 
     return (
         <div className="max-w-xl mx-auto my-20 px-4">
@@ -30,8 +41,8 @@ const CreateCourse = () => {
                     <Label>Course Title</Label>
                     <Input
                         type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={courseTitle}
+                        onChange={(e) => setCourseTitle(e.target.value)}
                         placeholder="Enter course title"
                     />
                 </div>
@@ -44,12 +55,12 @@ const CreateCourse = () => {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Category</SelectLabel>
-                                <SelectItem value="apple">Next JS</SelectItem>
-                                <SelectItem value="banana">MERN Stack</SelectItem>
-                                <SelectItem value="blueberry">HTML</SelectItem>
-                                <SelectItem value="carrot">Mobile Developemnt</SelectItem>
-                                <SelectItem value="broccoli">SpringBoot</SelectItem>
-                                <SelectItem value="spinach">AI/ML</SelectItem>
+                                <SelectItem value="next.js">Next JS</SelectItem>
+                                <SelectItem value="mern">MERN Stack</SelectItem>
+                                <SelectItem value="html">HTML</SelectItem>
+                                <SelectItem value="mobile">Mobile Developemnt</SelectItem>
+                                <SelectItem value="springboot">SpringBoot</SelectItem>
+                                <SelectItem value="ai/ml">AI/ML</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
