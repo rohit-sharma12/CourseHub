@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useGetCreatorCourseQuery } from "../../../api/courseApi";
+import { useEditCourseMutation, useGetCreatorCourseQuery } from "../../../api/courseApi";
 import { Badge, Edit } from "lucide-react";
 
 const invoices = [
