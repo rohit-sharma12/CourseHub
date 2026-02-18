@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useCreateLectureMutation } from "../../../api/courseApi";
-import {toast} from "sonner";
+import { useCreateLectureMutation, useGetLectureQuery } from "../../../api/courseApi";
+import { toast } from "sonner";
+import Lecture from "./Lecture";
 
 const CreateLecture = () => {
     const [lectureTitle, setLectureTitle] = useState("");
@@ -16,21 +17,27 @@ const CreateLecture = () => {
 
     const [createLecture, { data, isLoading, isSuccess, error }] = useCreateLectureMutation();
 
+    const { data: lectureData, isLoading: lectureLoading, isError: lectureError, refetch } = useGetLectureQuery(courseId);
+
     const createLectureHandler = async () => {
         await createLecture({ lectureTitle, courseId })
-    }
+    };
 
     useEffect(() => {
         if (isSuccess) {
-            toast.success(data.messssage);
+            refetch();
+            toast.success(data.message);
         }
         if (error) {
-            toast.error(error.data.messssage);
+            toast.error(error.data.message);
         }
     }, [isSuccess, error])
 
+
+    console.log(lectureData);
+
     return (
-        <div className="max-w-xl mx-auto my-20 px-4">
+        <div className="max-w-xl mx-auto my-5 px-4 bg-white dark:bg-slate-950 text-gray-900 dark:text-white">
             <h1 className="text-2xl font-bold mb-6">Create New Lecture</h1>
 
             <div className="space-y-6">
@@ -55,6 +62,18 @@ const CreateLecture = () => {
                             "Create Lecture"
                         )}
                     </Button>
+                </div>
+                <div className="mt-10">
+                    {
+                        lectureLoading ? (<p>Loading lectures...</p>
+                        ) : lectureError ? (<p>Failed to load lectures</p>) : lectureData.lectures.length === 0 ? (
+                            <p>No lectures available</p>
+                        ) : (
+                            lectureData.lectures.map((lecture, index) => (
+                                <Lecture key={lecture._id} lecture={lecture} courseId={courseId} index={index} />
+                            ))
+
+                        )}
                 </div>
             </div>
         </div>
