@@ -3,21 +3,28 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { useEditLectureMutation, useRemoveLectureMutation } from "../../../api/courseApi";
 
 const MEDIA_API = "http://localhost:8080/api/v1/media";
 
 const LectureTab = () => {
 
-    const [title, setTitle] = useState("");
+    const [lectureTitle, setLectureTitle] = useState("");
     const [uploadVideoInfo, setUploadVideoInfo] = useState(null);
     const [isFree, setIsFree] = useState(false);
     const [mediaProgress, setMediaProgress] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [disable, setDisable] = useState(true);
+    const params = useParams();
+    const { courseId, lectureId } = params;
+
+    const [editLecture, { data, isLoading, error, isSuccess }] = useEditLectureMutation();
+    const [removeLecture, {data:removeData, isLoading: removeLoading, isSuccess: removeSuccess }] = useRemoveLectureMutation();
 
     const fileChangedHandler = async (e) => {
         const file = e.target.files[0];
@@ -31,11 +38,15 @@ const LectureTab = () => {
                         setUploadProgress(Math.round((loaded * 100) / total))
                     }
                 });
-                if (res.data.sucess) {
-                    setUploadVideoInfo({ videoUrl: res.data.data.url, publicId: res.data.data.public._id });
+                if (res.data.success) {
+
+                    setUploadVideoInfo({ videoUrl: res.data.data.url, publicId: res.data.data.public_id });
+                    console.log("UPLOAD RESPONSE:", res.data);
                     setDisable(false);
                     toast.success(res.data.message);
                 }
+
+
             } catch (error) {
                 console.log(error);
                 toast.error("video uploaded failed");
@@ -43,7 +54,44 @@ const LectureTab = () => {
                 setMediaProgress(false)
             }
         }
+    };
+
+    const editLectureHandler = async () => {
+        if (!uploadVideoInfo) {
+            toast.error("Please upload a video first");
+            return;
+        }
+
+        await editLecture({
+            lectureTitle,
+            isPreviewFree: isFree,
+            videoInfo: uploadVideoInfo,
+            courseId,
+            lectureId
+        });
+    };
+
+
+    const removeLectureHandler = async () => {
+        await removeLecture(lectureId);
     }
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success(data.message);
+        }
+        if (error) {
+            toast.error(error.data.message);
+        }
+    }, [isSuccess, error]);
+
+    useEffect(() => {
+        if (removeSuccess) {
+            toast.success(removeData.message);
+        }
+
+    }, [removeSuccess]);
+
     return (
         <Card>
             <CardHeader className="flex justify-between">
@@ -52,20 +100,24 @@ const LectureTab = () => {
                     <CardDescription>Make changes and click to save.</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="destructive">Remove lecture</Button>
+                    <Button onClick={removeLectureHandler} variant="destructive">Remove lecture</Button>
                 </div>
             </CardHeader>
             <CardContent>
                 <div>
-                    <Label>Input</Label>
-                    <Input type="text" placeholder="Ex.Introduction to javaScript" />
+                    <Label>Title</Label>
+                    <Input value={lectureTitle} onChange={(e) => setLectureTitle(e.target.value)} type="text" placeholder="Ex.Introduction to javaScript" />
                 </div>
                 <div className="my-5">
                     <Label>Video <span className="text-red-500">*</span></Label>
                     <Input type="file" onChange={fileChangedHandler} accept="video/*" placeholder="Ex.Introduction to javaScript" className="w-fit" />
                 </div>
                 <div className="flex items-center space-x-2 my-5">
-                    <Switch id="airplane-mode" />
+                    <Switch
+                        checked={isFree}
+                        onCheckedChange={setIsFree}
+                    />
+
                     <Label htmlFor="airplane-mode">Is this video FREE</Label>
                 </div>
                 {mediaProgress && (
@@ -75,7 +127,7 @@ const LectureTab = () => {
                     </div>
                 )}
                 <div className="mt-4">
-                    <Button>Update lecture</Button>
+                    <Button onClick={editLectureHandler}>Update lecture</Button>
                 </div>
             </CardContent>
         </Card>
