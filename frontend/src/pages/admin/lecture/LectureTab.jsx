@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
-import { useEditLectureMutation, useRemoveLectureMutation } from "../../../api/courseApi";
+import { useEditLectureMutation, useGetLectureByIdQuery, useRemoveLectureMutation } from "../../../api/courseApi";
 
 const MEDIA_API = "http://localhost:8080/api/v1/media";
 
@@ -22,6 +22,18 @@ const LectureTab = () => {
     const [disable, setDisable] = useState(true);
     const params = useParams();
     const { courseId, lectureId } = params;
+
+    const { data: lectureData } = useGetLectureByIdQuery(lectureId);
+
+    const lecture = lectureData?.lecture;
+
+    useEffect(() => {
+        if (lecture) {
+            setLectureTitle(lecture.lectureTitle);
+            setIsFree(lecture.isPreviewFree);
+            setUploadVideoInfo(lecture.videoInfo);
+        }
+    },[lecture])
 
     const [editLecture, { data, isLoading, error, isSuccess }] = useEditLectureMutation();
     const [removeLecture, {data:removeData, isLoading: removeLoading, isSuccess: removeSuccess }] = useRemoveLectureMutation();
