@@ -38,13 +38,13 @@ export const authApi = createApi({
                 url: "logout",
                 method: "GET"
             }),
-            async onQueryStarted(arg, {dispatch }) {
+            async onQueryStarted(arg, { dispatch }) {
                 try {
                     dispatch(userLoggedIn())
                 } catch (error) {
                     console.error(error);
                 }
-            } 
+            }
         }),
         loadUser: builder.query({
             query: () => ({
@@ -71,4 +71,4 @@ export const authApi = createApi({
     })
 })
 
-export const { useRegisterUserMutation, useLoginUserMutation,useLogoutUserMutation, useLoadUserQuery, useUpdateUserMutation } = authApi
+export const { useRegisterUserMutation, useLoginUserMutation, useLogoutUserMutation, useLoadUserQuery, useUpdateUserMutation } = authApi;

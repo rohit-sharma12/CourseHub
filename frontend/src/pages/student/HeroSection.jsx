@@ -3,23 +3,31 @@ import { ArrowRight } from "lucide-react";
 import Course from "./Course";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import CourseCard from "./CourseCard";
 
 const HeroSection = () => {
-    const [search, setSearch] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const navigate = useNavigate();
+
+    const searchHandler = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim() !== "") {
+            navigate(`/course/search?query=${searchQuery}`);
+        }
+        setSearchQuery("")
+    }
 
     return (
         <div className="bg-white dark:bg-slate-950 text-gray-900 dark:text-white">
 
             <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
 
-                {/* Background Glow Effects */}
                 <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-3xl"></div>
                 <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl"></div>
 
                 <div className="relative max-w-7xl mx-auto px-6 py-32 flex flex-col items-center text-center">
 
-                    {/* Badge */}
                     <span className="inline-flex items-center gap-2 mb-6 px-5 py-2 text-sm rounded-full 
       bg-indigo-100/60 dark:bg-indigo-500/10 
       text-indigo-600 dark:text-indigo-400 backdrop-blur-md border border-indigo-200/50 dark:border-indigo-500/20">
@@ -34,14 +42,13 @@ const HeroSection = () => {
                         </span>
                     </h1>
 
-                    {/* Subheading */}
                     <p className="mt-6 text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
                         Learn from industry experts. Build real-world projects.
                         Upgrade your career with our modern learning platform.
                     </p>
 
-                    {/* Search Box */}
-                    <form className="mt-10 w-full max-w-2xl">
+
+                    <form className="mt-10 w-full max-w-2xl" onSubmit={searchHandler}>
                         <div className="flex items-center gap-3 p-3 rounded-2xl 
         bg-white/70 dark:bg-slate-900/70 
         backdrop-blur-xl border border-gray-200 dark:border-slate-700 
@@ -52,8 +59,8 @@ const HeroSection = () => {
                             <input
                                 type="text"
                                 placeholder="Search courses (React, Node, MERN...)"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1 h-12 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400"
                             />
 
@@ -65,7 +72,6 @@ const HeroSection = () => {
                         </div>
                     </form>
 
-                    {/* CTA Buttons */}
                     <div className="mt-8 flex gap-4">
                         <Button size="lg" className="px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90">
                             Get Started

@@ -32,6 +32,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
+        console.log('LOGIN REQ BODY:', req.body);
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({
@@ -39,6 +40,8 @@ export const login = async (req, res) => {
             })
         };
         const user = await User.findOne({ email });
+        console.log('FOUND USER FOR LOGIN:', !!user);
+        if (user) console.log('USER HASHED PASSWORD:', user.password);
         if (!user) {
             return res.status(400).json({
                 message: "Incorrect email or password",
@@ -81,7 +84,7 @@ export const logout = async (req, res) => {
 export const getUserProfile = async (req, res) => {
     try {
         const userId = req.id;
-        const user = await User.findById(userId).select("-password");
+        const user = await User.findById(userId).select("-password").populate("enrolledCourses");
         if (!user) {
             return res.status(404).json({
                 message: "Profile not found"

@@ -1,10 +1,11 @@
 import CourseSkeleton from "../../components/CourseSkeleton";
 import Course from "./Course";
-
-const courses = [1, 2, 3, 4, 5, 6];
+import { useGetPublishedCourseQuery } from "../../api/courseApi";
 
 const CourseCard = () => {
-    const isLoading = false;
+    const { data, isLoading, isError } = useGetPublishedCourseQuery();
+    console.log(data?.courses);
+    if (isError) return <h1>Some error is occured</h1>
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
@@ -12,8 +13,8 @@ const CourseCard = () => {
                 ? Array.from({ length: 8 }).map((_, i) => (
                     <CourseSkeleton key={i} />
                 ))
-                : courses.map((_, i) => (
-                    <Course key={i} />
+                : data?.courses && data.courses.map((course, i) => (
+                    <Course key={i} course={course} />
                 ))
             }
         </div>

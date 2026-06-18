@@ -1,4 +1,3 @@
-//u6k7dz0rVeqxvKkn
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Login from "./pages/Login"
 import HeroSection from "./pages/student/HeroSection"
@@ -12,6 +11,11 @@ import CreateCourse from "./pages/admin/course/CreateCourse";
 import EditCourse from "./pages/EditCourse";
 import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
+import CourseDetail from "./pages/student/CourseDetail";
+import CourseProgress from "./pages/student/CourseProgress";
+import Search from "./pages/student/Search";
+import { AdminRoute, AuthenticatedUser, ProtectedRoute } from "./components/ProtectedRoute";
+import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 
 const appRouter = createBrowserRouter([
   {
@@ -28,21 +32,33 @@ const appRouter = createBrowserRouter([
       },
       {
         path: 'login',
-        element: <Login />
+        element: <AuthenticatedUser><Login /></AuthenticatedUser>
       },
       {
         path: "my-learning",
-        element: <MyLearning />
+        element: <ProtectedRoute><MyLearning /></ProtectedRoute>
       },
       {
         path: "profile",
-        element: <Profile />
+        element: <ProtectedRoute><Profile /></ProtectedRoute>
+      },
+      {
+        path: "course/search",
+        element: <ProtectedRoute> <Search /></ProtectedRoute>
+      },
+      {
+        path: "course-detail/:courseId",
+        element: <ProtectedRoute> <CourseDetail /></ProtectedRoute>
+      },
+      {
+        path: "course-progress/:courseId",
+        element: <ProtectedRoute><PurchaseCourseProtectedRoute><CourseProgress /></PurchaseCourseProtectedRoute></ProtectedRoute>
       },
 
       //admin routes
       {
         path: "admin",
-        element: <Sidebar />,
+        element: <AdminRoute> <Sidebar /></AdminRoute>,
         children: [
           {
             path: "dashboard",

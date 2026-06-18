@@ -114,7 +114,7 @@ const CourseTab = () => {
                     </CardTitle>
                 </div>
                 <div className="space-x-2">
-                    <Button variant="outline" onClick={() => publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")}>
+                    <Button disabled={courseByIdData?.course.lectures.length === 0} variant="outline" onClick={() => publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")}>
                         {courseByIdData?.course.isPublished ? "Unpublished" : "Published"}
                     </Button>
                     <Button>

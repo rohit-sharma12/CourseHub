@@ -33,6 +33,60 @@ export const createCourse = async (req, res) => {
     }
 }
 
+export const getPublishedCourse = async (_, res) => {
+    try {
+        const courses = await Course.find({ isPublished: true }).populate({ path: "creator", select: "name photoUrl" })
+        if (!courses) {
+            return res.status(404).json({
+                message: "Course not found!"
+            })
+        }
+
+        return res.status(200).json({
+            courses
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to get published courses",
+        });
+    }
+}
+
+export const getSearchCourses = async (req, res) => {
+    try {
+        const { query: searchQuery, categories, sortByPrice } = req.query;
+
+        const filter = {};
+        if (searchQuery) {
+            const regex = new RegExp(searchQuery, "i");
+            filter.$or = [
+                { courseTitle: regex },
+                { subTitle: regex },
+                { description: regex },
+            ];
+        }
+
+        if (categories) {
+            const cats = categories.split(",").map((c) => decodeURIComponent(c));
+            filter.category = { $in: cats };
+        }
+
+        let query = Course.find(filter).populate({ path: "creator", select: "name photoUrl" });
+
+        if (sortByPrice) {
+            if (sortByPrice === "low-to-high") query = query.sort({ coursePrice: 1 });
+            else if (sortByPrice === "high-to-low") query = query.sort({ coursePrice: -1 });
+        }
+
+        const courses = await query.exec();
+
+        return res.status(200).json({ courses });
+    } catch (error) {
+        console.error("SEARCH COURSES ERROR:", error);
+        return res.status(500).json({ message: "Failed to search courses" });
+    }
+}
+
 export const getCreatorCourses = async (req, res) => {
     try {
         const userId = req.id;
@@ -97,6 +151,7 @@ export const editCourse = async (req, res) => {
 export const getCourseById = async (req, res) => {
     try {
         const { courseId } = req.params;
+        console.log('GET COURSE BY ID REQ PARAMS:', courseId);
         const course = await Course.findById(courseId);
         if (!course) {
             return res.status(500).json({
@@ -107,7 +162,7 @@ export const getCourseById = async (req, res) => {
             course
         });
     } catch (error) {
-        console.error("ERROR:", error);
+        console.error("GET COURSE BY ID ERROR:", error);
         return res.status(500).json({
             success: false,
             message: "Failed to get course by id",
@@ -280,3 +335,4 @@ export const togglePublishCourse = async (req, res) => {
         });
     }
 }
+

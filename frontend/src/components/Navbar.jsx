@@ -47,7 +47,7 @@ const Navbar = () => {
 
                     <div className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
                         <School size={28} />
-                        CourseHub
+                        <Link to="/"><h1>CourseHub</h1></Link>
                     </div>
 
                     <div className="hidden md:flex items-center gap-6">
